@@ -1,8 +1,10 @@
 // gw4gPrVGNCTWVF9m
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors')
 const server = express();
-const villaRouter = require('./routes/villaRoutes')
+const villaRouter = require('./routes/villaRoutes');
+const bodyParser = require('body-parser');
 
 main().catch((err) => console.log(err));
 async function main() {
@@ -11,8 +13,9 @@ async function main() {
 };
 
 //MiddleWares
-
-server.use('/api',villaRouter.router);
+server.use(cors());
+server.use(bodyParser.json());
+server.use('/', villaRouter.router);
 
 
 

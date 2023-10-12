@@ -5,9 +5,9 @@ const { Schema } = mongoose;
 const villaSchema = new Schema({
     name: String,
     driveLink: String,
-    price: Number,
-    bhk: Number,
-    baths: Number,
+    price: String,
+    bhk: String,
+    baths: String,
     capacity: String,
     images: [String]
 });
