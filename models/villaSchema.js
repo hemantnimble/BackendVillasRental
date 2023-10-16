@@ -4,12 +4,12 @@ const { Schema } = mongoose;
 
 const villaSchema = new Schema({
     name: String,
-    driveLink: String,
-    price: String,
     bhk: String,
-    baths: String,
     capacity: String,
-    images: [String]
+    price: String,
+    driveLink: String,
+    // baths: String,
+    // images: [String]
 });
 
 exports.Villa = mongoose.model('Villa', villaSchema);  
