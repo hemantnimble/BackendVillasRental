@@ -1,14 +1,15 @@
-// gw4gPrVGNCTWVF9m
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors')
+const cors = require('cors');
 const server = express();
 const villaRouter = require('./routes/villaRoutes');
 const bodyParser = require('body-parser');
 
+
 main().catch((err) => console.log(err));
 async function main() {
-    await mongoose.connect('mongodb+srv://nimblehemant:gw4gPrVGNCTWVF9m@cluster0.kekmg0k.mongodb.net/');
+    await mongoose.connect('mongodb+srv://nimblehemant:gw4gPrVGNCTWVF9m@cluster0.kekmg0k.mongodb.net/villa');
     console.log("Db connected")
 };
 

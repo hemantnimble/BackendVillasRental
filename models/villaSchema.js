@@ -8,8 +8,7 @@ const villaSchema = new Schema({
     capacity: String,
     price: String,
     driveLink: String,
-    // baths: String,
-    // images: [String]
+    images: [{ data: Buffer, contentType: String }]
 });
 
 exports.Villa = mongoose.model('Villa', villaSchema);  

@@ -1,6 +1,7 @@
 const model = require('../models/villaSchema');
 const Villa = model.Villa;
 
+
 exports.villaInfo = async (req, res) => {
     const villas = await Villa.find();
     res.json(villas);
@@ -11,12 +12,15 @@ exports.addVilla = async (req, res) => {
         const villaData = req.body;
         const villa = new Villa(villaData);
         await villa.save();
+
         res.status(201).json({ message: 'Villa added successfully' });
     } catch (error) {
         console.error('Error adding villa:', error);
         res.status(500).json({ error: 'Failed to add villa' });
     }
 }
+
+
 exports.updateVilla = async (req, res) => {
     try {
         const updatedVilla = req.body; // Data from the request
