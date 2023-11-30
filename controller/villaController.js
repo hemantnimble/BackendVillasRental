@@ -1,16 +1,27 @@
 const model = require('../models/villaSchema');
 const Villa = model.Villa;
+// const multer = require('multer');
 
-
+// GET ALL VILLAS INFO
 exports.villaInfo = async (req, res) => {
     const villas = await Villa.find();
     res.json(villas);
 }
-
+// ADD A NEW VILLA
 exports.addVilla = async (req, res) => {
+
     try {
-        const villaData = req.body;
-        const villa = new Villa(villaData);
+        const { name, bhk, capacity, price, driveLink, halls } = req.body;
+        const images = req.files.map(file => file.path);
+        const amenities = {
+            wifi: req.body['amenities.wifi'] === 'true', // convert checkbox value to boolean
+            tv: req.body['amenities.tv'] === 'true',
+        };
+
+
+        const villa = new Villa({
+            name, bhk, capacity, price, driveLink, images, amenities, halls
+        });
         await villa.save();
 
         res.status(201).json({ message: 'Villa added successfully' });
@@ -18,9 +29,9 @@ exports.addVilla = async (req, res) => {
         console.error('Error adding villa:', error);
         res.status(500).json({ error: 'Failed to add villa' });
     }
-}
+};
 
-
+// UPDATE EXISTING VILLA
 exports.updateVilla = async (req, res) => {
     try {
         const updatedVilla = req.body; // Data from the request
@@ -33,8 +44,22 @@ exports.updateVilla = async (req, res) => {
         res.status(500).send('Update failed');
     }
 }
+// DELETE EXISTING VILLA
 exports.deleteVilla = async (req, res) => {
     const id = req.params.id;
     await Villa.findByIdAndDelete(id);
     res.json({ message: "deleted" })
 }
+
+// const imagesMiddleware = multer({ dest: 'uploadedImages/' })
+// //HANDLE FILES/IMAGES UPOLADS
+// exports.uploadImages = (imagesMiddleware.array('images', 10), async (req, res) => {
+//     // const uploadedFiles = [];
+//     // for (let i = 0; i < req.files.length; i++) {
+//     //     const { path, originalname, mimetype } = req.files[i];
+//     //     const url = await uploadToS3(path, originalname, mimetype);
+//     //     uploadedFiles.push(url);
+//     // }
+//     // res.json(uploadedFiles);
+//     res.json(req.files)
+// })

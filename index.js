@@ -6,6 +6,10 @@ const server = express();
 const villaRouter = require('./routes/villaRoutes');
 const userRouter = require('./routes/userRoutes');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const path = require('path');
+
+
 
 
 main().catch((err) => console.log(err));
@@ -15,8 +19,14 @@ async function main() {
 };
 
 //MiddleWares
-server.use(cors());
+server.use(express.static(path.join(__dirname, 'dist')));
+server.use(cors({
+    credentials: true,
+}));
+// server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
+server.use('/uploads', express.static('uploads'));
+server.use(cookieParser());
 server.use('/villas', villaRouter.router);
 server.use('/users', userRouter.router);
 

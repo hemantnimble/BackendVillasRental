@@ -8,7 +8,11 @@ const villaSchema = new Schema({
     capacity: String,
     price: String,
     driveLink: String,
-    images: [{ data: Buffer, contentType: String }]
-});
+    halls: Number,
+    images: [String],
+    amenities: {
+        wifi: Boolean,
+        tv: Boolean,
+      },});
 
 exports.Villa = mongoose.model('Villa', villaSchema);  

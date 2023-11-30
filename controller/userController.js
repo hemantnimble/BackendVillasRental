@@ -3,53 +3,6 @@ const User = model.User;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt')
 
-// GET ALL USRES INFORMATION 
-exports.userInfo = async (req, res) => {
-    const users = await User.find();
-    res.json(users);
-}
-// REGISTER A NEW USER 
-exports.addUser = async (req, res) => {
-    try {
-        const { username, email, password, phonenum, city } = req.body;
-
-        // Check if user or phone number already exists
-        const existingUser = await User.findOne({ email });
-        const existPhoneNum = await User.findOne({ phonenum });
-
-        if (existingUser) {
-            return res.status(400).json({ error: "Email Exists" });
-        }
-
-        if (existPhoneNum) {
-            return res.status(400).json({ error: "Phone Number Exists" });
-        }
-
-        if (password) {
-            const hashedPassword = await bcrypt.hash(password, 10);
-
-            const user = new User({
-                username,
-                email,
-                password: hashedPassword,
-                phonenum,
-                city
-            });
-
-            const result = await user.save();
-            if (result) {
-                return res.status(201).send({ msg: "Registered successfully" });
-            }
-        }
-
-        // Handle password hashing failure
-        return res.status(500).send({ error: "Unable to hash password" });
-
-    } catch (error) {
-        console.error('Error adding user:', error);
-        res.status(500).json({ error: "Server error" });
-    }
-};
 
 // LOGIN USER 
 exports.login = async (req, res) => {
@@ -71,14 +24,18 @@ exports.login = async (req, res) => {
         // Generate JWT token
         const token = jwt.sign({
             userId: user._id,
-            username: user.username
+            // username: user.username
         }, process.env.JWT_SECRET, { expiresIn: "48h" });
 
-        return res.status(200).send({
-            msg: "Login Success",
-            username: user.username,
-            token
-        });
+        const expiryDate = new Date(Date.now() + 3600000)
+        const { password: hashedPassword, ...rest } = user._doc;
+        res.cookie('token', token, { httpOnly: true, expires: expiryDate })
+            .status(200)
+            .json(rest);
+
+
+
+
     } catch (error) {
         return res.status(500).send({ error: "Server Error" });
     }
