@@ -7,11 +7,18 @@ exports.villaInfo = async (req, res) => {
     const villas = await Villa.find();
     res.json(villas);
 }
+//GET SINGLE VILLA INFO
+exports.singleVilla = async (req, res) => {
+    const id = req.params.id
+    const singleVilla = await Villa.findById(id);
+    res.json(singleVilla);
+    // console.log(id)
+}
 // ADD A NEW VILLA
 exports.addVilla = async (req, res) => {
 
     try {
-        const { name, bhk, capacity, price, driveLink, halls } = req.body;
+        const { name, bhk, capacity, checkin, checkout, drivelink, halls, baths, weekendprice, weekdayprice, aboveguests, description, location, mapslink } = req.body;
         const images = req.files.map(file => file.path);
         const amenities = {
             wifi: req.body['amenities.wifi'] === 'true', // convert checkbox value to boolean
@@ -20,7 +27,7 @@ exports.addVilla = async (req, res) => {
 
 
         const villa = new Villa({
-            name, bhk, capacity, price, driveLink, images, amenities, halls
+            images, amenities, name, bhk, capacity, checkin, checkout, drivelink, halls, baths, weekendprice, weekdayprice, aboveguests, description, location, mapslink
         });
         await villa.save();
 

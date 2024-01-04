@@ -18,11 +18,18 @@ async function main() {
     console.log("Db connected")
 };
 
+// const cookieExtractor = function (req) {
+//     var token = null;
+//     if (req && req.cookies) {
+//         token = req.cookies['token'];
+//     }
+//     return token;
+// }
+
 //MiddleWares
-server.use(express.static(path.join(__dirname, 'dist')));
-server.use(cors({
-    credentials: true,
-}));
+server.use(express.static(path.resolve(__dirname, 'dist')));
+server.use(cors({ credentials: true, origin: 'http://localhost:5173' }));
+
 // server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
 server.use('/uploads', express.static('uploads'));
@@ -31,6 +38,9 @@ server.use('/villas', villaRouter.router);
 server.use('/users', userRouter.router);
 
 
+server.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 server.listen(process.env.PORT, () => {
     console.log("server started");

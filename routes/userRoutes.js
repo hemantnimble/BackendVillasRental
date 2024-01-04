@@ -7,6 +7,9 @@ userRouter
     // .get('/getuser/:id', userController.getUser)
     // .post('/adduser', userController.addUser)
     .post('/login', userController.login)
+    .get('/loggedin', userController.loggedIn)
+    .post('/logout', userController.logout);
+
 
 exports.router = userRouter;
 
