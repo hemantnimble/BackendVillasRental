@@ -1,6 +1,5 @@
 const model = require('../models/villaSchema');
 const Villa = model.Villa;
-// const multer = require('multer');
 
 // GET ALL VILLAS INFO
 exports.villaInfo = async (req, res) => {
@@ -20,11 +19,15 @@ exports.addVilla = async (req, res) => {
     try {
         const { name, bhk, capacity, checkin, checkout, drivelink, halls, baths, weekendprice, weekdayprice, aboveguests, description, location, mapslink } = req.body;
         const images = req.files.map(file => file.path);
-        const amenities = {
-            wifi: req.body['amenities.wifi'] === 'true', // convert checkbox value to boolean
-            tv: req.body['amenities.tv'] === 'true',
-        };
 
+        // Create an object to hold the amenities dynamically
+        const amenities = {};
+        for (const key in req.body) {
+            if (key.startsWith('amenities.')) {
+                const amenityName = key.substring('amenities.'.length);
+                amenities[amenityName] = req.body[key] === 'true';
+            }
+        }
 
         const villa = new Villa({
             images, amenities, name, bhk, capacity, checkin, checkout, drivelink, halls, baths, weekendprice, weekdayprice, aboveguests, description, location, mapslink
@@ -41,16 +44,27 @@ exports.addVilla = async (req, res) => {
 // UPDATE EXISTING VILLA
 exports.updateVilla = async (req, res) => {
     try {
-        const updatedVilla = req.body; // Data from the request
+
+        const formData = req.body; // Data from the request
         const id = req.params.id; // Document ID
 
-        await Villa.findByIdAndUpdate(id, updatedVilla, { new: true });
+        // Check if new images were uploaded
+        const newImages = req.files;
+
+        if (newImages) {
+            // Extract file paths from req.files and update formData.images
+            formData.images = newImages.map(file => file.path);
+        }
+
+        const updatedVilla = await Villa.findByIdAndUpdate(id, formData, { new: true });
+
         res.json(updatedVilla);
     } catch (err) {
         console.error(err);
         res.status(500).send('Update failed');
     }
-}
+};
+
 // DELETE EXISTING VILLA
 exports.deleteVilla = async (req, res) => {
     const id = req.params.id;

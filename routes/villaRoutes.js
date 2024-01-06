@@ -8,7 +8,7 @@ villaRouter
     .get('/', villaController.villaInfo)
     .get('/:id', villaController.singleVilla)
     .post('/addvilla',upload.array('images', 12), villaController.addVilla)
-    .put('/updatevilla/:id', villaController.updateVilla)
+    .put('/updatevilla/:id', upload.array('images', 12),  villaController.updateVilla)
     .delete('/deletevilla/:id', villaController.deleteVilla)
 
 exports.router = villaRouter;

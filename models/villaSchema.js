@@ -19,8 +19,8 @@ const villaSchema = new Schema({
   mapslink: String,
   images: [String],
   amenities: {
-    wifi: Boolean,
-    tv: Boolean,
+    type: Map,
+    of: Boolean,
   },
 });
 
