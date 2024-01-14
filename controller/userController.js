@@ -82,7 +82,40 @@ exports.logout = (req, res) => {
     }
 };
 
+// REGISTER A NEW USER 
+exports.addUser = async (req, res) => {
+    try {
+        const { email, password, } = req.body;
 
+        // Check if user or phone number already exists
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            return res.status(400).json({ error: "Email Exists" });
+        }
+
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const user = new User({
+                email,
+                password: hashedPassword,
+            });
+
+            const result = await user.save();
+            if (result) {
+                return res.status(201).send({ msg: "Registered successfully" });
+            }
+        }
+
+        // Handle password hashing failure
+        return res.status(500).send({ error: "Unable to hash password" });
+
+    } catch (error) {
+        console.error('Error adding user:', error);
+        res.status(500).json({ error: "Server error" });
+    }
+};
 
 
 

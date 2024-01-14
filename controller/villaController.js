@@ -1,5 +1,7 @@
 const model = require('../models/villaSchema');
 const Villa = model.Villa;
+const { google } = require("googleapis");
+
 
 // GET ALL VILLAS INFO
 exports.villaInfo = async (req, res) => {
@@ -71,16 +73,37 @@ exports.deleteVilla = async (req, res) => {
     await Villa.findByIdAndDelete(id);
     res.json({ message: "deleted" })
 }
+//GOOGLE SHEETS API
+exports.googleSheets = async (req, res) => {
 
-// const imagesMiddleware = multer({ dest: 'uploadedImages/' })
-// //HANDLE FILES/IMAGES UPOLADS
-// exports.uploadImages = (imagesMiddleware.array('images', 10), async (req, res) => {
-//     // const uploadedFiles = [];
-//     // for (let i = 0; i < req.files.length; i++) {
-//     //     const { path, originalname, mimetype } = req.files[i];
-//     //     const url = await uploadToS3(path, originalname, mimetype);
-//     //     uploadedFiles.push(url);
-//     // }
-//     // res.json(uploadedFiles);
-//     res.json(req.files)
-// })
+    const auth = new google.auth.GoogleAuth({
+        keyFile: "credentials.json",
+        scopes: "https://www.googleapis.com/auth/spreadsheets",
+    });
+
+    // Create client instance for auth
+    const client = await auth.getClient();
+
+    // Instance of Google Sheets API
+    const googleSheets = google.sheets({ version: "v4", auth: client });
+
+    const spreadsheetId = "1AZ5YSK29pQa5pNNXtm2TgRsod0pcS6st06_iOVUNz98";
+
+    // Get metadata about spreadsheet
+    const metaData = await googleSheets.spreadsheets.get({
+        auth,
+        spreadsheetId,
+    });
+
+    // Read rows from spreadsheet
+    const getRows = await googleSheets.spreadsheets.values.get({
+        auth,
+        spreadsheetId,
+        range: "Sheet1!A:Z",
+    });
+
+    // console.log('Google Sheets endpoint called');
+    res.status(200).send(getRows);
+}
+
+
